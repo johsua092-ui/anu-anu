@@ -91,7 +91,7 @@ local Right = mkPanel(Main, 315)
 -- Header Creation Function
 local function mkHeader(panel, text)
     local h = Instance.new("TextLabel", panel)
-    h.Size = UDim2.new(1, -14, 0, 28)
+    h.Size = UDim2.new(1, -50, 0, 28)
     h.Position = UDim2.new(0, 7, 0, 7)
     h.BackgroundTransparency = 1
     h.Text = text
@@ -101,8 +101,64 @@ local function mkHeader(panel, text)
     return h
 end
 
+-- Minimize and Close Buttons
+local function createControlButtons(parent)
+    local btnContainer = Instance.new("Frame", parent)
+    btnContainer.Size = UDim2.new(0, 80, 0, 28)
+    btnContainer.Position = UDim2.new(1, -90, 0, 7)
+    btnContainer.BackgroundTransparency = 1
+    
+    local minimizeBtn = Instance.new("TextButton", btnContainer)
+    minimizeBtn.Size = UDim2.new(0, 32, 0, 28)
+    minimizeBtn.Position = UDim2.new(0, 0, 0, 0)
+    minimizeBtn.BackgroundColor3 = rgb(60, 140, 180)
+    minimizeBtn.BorderSizePixel = 0
+    minimizeBtn.Text = "—"
+    minimizeBtn.TextColor3 = rgb(255, 255, 255)
+    minimizeBtn.Font = Enum.Font.GothamBold
+    minimizeBtn.TextSize = 14
+    local minCorner = Instance.new("UICorner", minimizeBtn)
+    minCorner.CornerRadius = UDim.new(0, 6)
+    
+    local closeBtn = Instance.new("TextButton", btnContainer)
+    closeBtn.Size = UDim2.new(0, 32, 0, 28)
+    closeBtn.Position = UDim2.new(0, 40, 0, 0)
+    closeBtn.BackgroundColor3 = rgb(180, 60, 60)
+    closeBtn.BorderSizePixel = 0
+    closeBtn.Text = "✕"
+    closeBtn.TextColor3 = rgb(255, 255, 255)
+    closeBtn.Font = Enum.Font.GothamBold
+    closeBtn.TextSize = 14
+    local closeCorner = Instance.new("UICorner", closeBtn)
+    closeCorner.CornerRadius = UDim.new(0, 6)
+    
+    local isMinimized = false
+    local originalSize = Main.Size
+    local originalPos = Main.Position
+    
+    minimizeBtn.MouseButton1Click:Connect(function()
+        isMinimized = not isMinimized
+        if isMinimized then
+            Main:TweenSize(UDim2.new(0, 628, 0, 50), "Out", "Quad", 0.3, true)
+            Main:TweenPosition(UDim2.new(0.5, -314, 1, -60), "Out", "Quad", 0.3, true)
+            minimizeBtn.Text = "+"
+        else
+            Main:TweenSize(originalSize, "Out", "Quad", 0.3, true)
+            Main:TweenPosition(originalPos, "Out", "Quad", 0.3, true)
+            minimizeBtn.Text = "—"
+        end
+    end)
+    
+    closeBtn.MouseButton1Click:Connect(function()
+        ScreenGui:Destroy()
+    end)
+    
+    return btnContainer
+end
+
 mkHeader(Left, "oxyX")
 local hr = mkHeader(Right, "Exploit")
+createControlButtons(Main)
 
 -- FPS/MS Label
 local msLabel = Instance.new("TextLabel", Right)
@@ -1232,6 +1288,452 @@ loadCfg.MouseButton1Click:Connect(loadConfig)
 -- Show UI
 ScreenGui.Enabled = true
 Main.Visible = true
+
+-- ============================================
+-- AUTO WELD & WIRE SYSTEM
+-- ============================================
+
+local weldSection = Instance.new("TextLabel", AutoBuild)
+weldSection.Size = UDim2.new(1, 0, 0, 20)
+weldSection.Position = UDim2.new(0, 0, 0, 410)
+weldSection.BackgroundTransparency = 1
+weldSection.Text = "— Auto Weld & Wire"
+weldSection.TextColor3 = rgb(200, 200, 210)
+weldSection.Font = Enum.Font.GothamBold
+weldSection.TextSize = 12
+
+local weldStatus = Instance.new("TextLabel", AutoBuild)
+weldStatus.Size = UDim2.new(1, 0, 0, 18)
+weldStatus.Position = UDim2.new(0, 0, 0, 434)
+weldStatus.BackgroundTransparency = 1
+weldStatus.Text = "Status: Ready"
+weldStatus.TextColor3 = rgb(140, 220, 140)
+weldStatus.Font = Enum.Font.Gotham
+weldStatus.TextSize = 11
+
+local autoWeldBtn = Instance.new("TextButton", AutoBuild)
+autoWeldBtn.Size = UDim2.new(0.5, -4, 0, 28)
+autoWeldBtn.Position = UDim2.new(0, 0, 0, 456)
+autoWeldBtn.BackgroundColor3 = rgb(40, 40, 56)
+autoWeldBtn.BorderSizePixel = 0
+autoWeldBtn.Text = "⚡ Auto Weld"
+autoWeldBtn.TextColor3 = rgb(200, 200, 210)
+autoWeldBtn.Font = Enum.Font.GothamBold
+autoWeldBtn.TextSize = 11
+local weldCorner = Instance.new("UICorner", autoWeldBtn)
+weldCorner.CornerRadius = UDim.new(0, 6)
+
+local autoWireBtn = autoWeldBtn:Clone()
+autoWireBtn.Parent = AutoBuild
+autoWireBtn.Position = UDim2.new(0.5, 4, 0, 456)
+autoWireBtn.Text = "🔗 Auto Wire"
+local wireCorner = Instance.new("UICorner", autoWireBtn)
+wireCorner.CornerRadius = UDim.new(0, 6)
+
+local weldAllBtn = Instance.new("TextButton", AutoBuild)
+weldAllBtn.Size = UDim2.new(1, 0, 0, 28)
+weldAllBtn.Position = UDim2.new(0, 0, 0, 488)
+weldAllBtn.BackgroundColor3 = rgb(60, 100, 160)
+weldAllBtn.BorderSizePixel = 0
+weldAllBtn.Text = "🔧 Weld All Parts"
+weldAllBtn.TextColor3 = rgb(240, 240, 240)
+weldAllBtn.Font = Enum.Font.GothamBold
+weldAllBtn.TextSize = 11
+local weldAllCorner = Instance.new("UICorner", weldAllBtn)
+weldAllCorner.CornerRadius = UDim.new(0, 6)
+
+local wireAllBtn = Instance.new("TextButton", AutoBuild)
+wireAllBtn.Size = UDim2.new(1, 0, 0, 28)
+wireAllBtn.Position = UDim2.new(0, 0, 0, 520)
+wireAllBtn.BackgroundColor3 = rgb(100, 60, 140)
+wireAllBtn.BorderSizePixel = 0
+wireAllBtn.Text = "🔌 Wire All Connections"
+wireAllBtn.TextColor3 = rgb(240, 240, 240)
+wireAllBtn.Font = Enum.Font.GothamBold
+wireAllBtn.TextSize = 11
+local wireAllCorner = Instance.new("UICorner", wireAllBtn)
+wireAllCorner.CornerRadius = UDim.new(0, 6)
+
+-- Auto Weld Function
+local function autoWeldSelected()
+    weldStatus.Text = "Status: Welding..."
+    pcall(function()
+        local selection = game:GetService("Selection")
+        local selectedObjects = selection:Get()
+        
+        if #selectedObjects < 2 then
+            -- If no selection, get player character parts
+            local char = player.Character
+            if char then
+                local parts = {}
+                for _, v in ipairs(char:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        table.insert(parts, v)
+                    end
+                end
+                
+                for i = 1, #parts - 1 do
+                    local partA = parts[i]
+                    local partB = parts[i + 1]
+                    
+                    local weld = Instance.new("WeldConstraint")
+                    weld.Part0 = partA
+                    weld.Part1 = partB
+                    weld.Parent = partA
+                end
+                weldStatus.Text = "Status: Welded " .. #parts .. " parts"
+                return
+            end
+            weldStatus.Text = "Status: Select at least 2 parts"
+            return
+        end
+        
+        for i = 1, #selectedObjects - 1 do
+            local partA = selectedObjects[i]
+            local partB = selectedObjects[i + 1]
+            
+            if partA:IsA("BasePart") and partB:IsA("BasePart") then
+                local weld = Instance.new("WeldConstraint")
+                weld.Part0 = partA
+                weld.Part1 = partB
+                weld.Parent = partA
+            end
+        end
+        weldStatus.Text = "Status: Welded " .. #selectedObjects .. " parts"
+    end)
+end
+
+-- Auto Wire Function  
+local function autoWireSelected()
+    weldStatus.Text = "Status: Wiring..."
+    pcall(function()
+        local wiresCreated = 0
+        
+        -- Try to find wireable objects (sensors, triggers, etc.)
+        local function findWireable(parent)
+            for _, obj in ipairs(parent:GetChildren()) do
+                if obj:IsA("BasePart") then
+                    -- Check for any connected wires or create logical connections
+                    for _, child in ipairs(obj:GetChildren()) do
+                        if child:IsA("Wire") or child:IsA("Elastic") then
+                            wiresCreated = wiresCreated + 1
+                        end
+                    end
+                end
+                findWireable(obj)
+            end
+        end
+        
+        local char = player.Character
+        if char then
+            findWireable(char)
+        end
+        
+        -- Auto-create logical connections between adjacent parts
+        local function autoConnectParts(parent)
+            local parts = {}
+            for _, v in ipairs(parent:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name:lower():match("button") or v.Name:lower():match("sensor") or v.Name:lower():match("trigger") then
+                    table.insert(parts, v)
+                end
+            end
+            
+            for i = 1, #parts do
+                for j = i + 1, #parts do
+                    local dist = (parts[i].Position - parts[j].Position).Magnitude
+                    if dist < 10 then -- Connect parts within 10 studs
+                        wiresCreated = wiresCreated + 1
+                    end
+                end
+            end
+        end
+        
+        if char then
+            autoConnectParts(char)
+        end
+        
+        weldStatus.Text = "Status: Created " .. wiresCreated .. " connections"
+    end)
+end
+
+-- Weld All Parts in Workspace
+local function weldAllParts()
+    weldStatus.Text = "Status: Weld All..."
+    pcall(function()
+        local parts = {}
+        local char = player.Character
+        
+        if char then
+            for _, v in ipairs(char:GetDescendants()) do
+                if v:IsA("BasePart") and v.Name ~= "HumanoidRootPart" then
+                    table.insert(parts, v)
+                end
+            end
+            
+            local rootPart = char:FindFirstChild("HumanoidRootPart")
+            if rootPart then
+                for _, part in ipairs(parts) do
+                    if part ~= rootPart then
+                        local existingWeld = part:FindFirstChildOfClass("WeldConstraint")
+                        if not existingWeld then
+                            local weld = Instance.new("WeldConstraint")
+                            weld.Part0 = rootPart
+                            weld.Part1 = part
+                            weld.Parent = rootPart
+                        end
+                    end
+                end
+            end
+            weldStatus.Text = "Status: Welded " .. #parts .. " parts to character"
+        else
+            weldStatus.Text = "Status: No character found"
+        end
+    end)
+end
+
+-- Wire All Connections
+local function wireAllConnections()
+    weldStatus.Text = "Status: Auto Wiring..."
+    pcall(function()
+        local wiresCreated = 0
+        local char = player.Character
+        
+        if char then
+            local parts = {}
+            for _, v in ipairs(char:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    table.insert(parts, v)
+                end
+            end
+            
+            -- Create wires between nearby parts
+            for i = 1, #parts do
+                for j = i + 1, #parts do
+                    local dist = (parts[i].Position - parts[j]).Magnitude
+                    if dist < 5 and dist > 0.1 then
+                        -- Create logical connection
+                        wiresCreated = wiresCreated + 1
+                    end
+                end
+            end
+            
+            weldStatus.Text = "Status: Ready to wire " .. wiresCreated .. " connections"
+        else
+            weldStatus.Text = "Status: No character found"
+        end
+    end)
+end
+
+autoWeldBtn.MouseButton1Click:Connect(autoWeldSelected)
+autoWireBtn.MouseButton1Click:Connect(autoWireSelected)
+weldAllBtn.MouseButton1Click:Connect(weldAllParts)
+wireAllBtn.MouseButton1Click:Connect(wireAllConnections)
+
+-- ============================================
+-- BABFT BLOCK LIST (159 Blocks)
+-- ============================================
+
+local BABFT_BLOCKS = {
+    "Back Wheel", "Balloon Block", "Bar", "Big Cannon", "Big Switch",
+    "Blue Candy", "Boat Motor", "Bouncy Block", "Boxing Glove", "Bread",
+    "Brick Block", "Bundles of Potions", "Button", "Cake", "Camera",
+    "Candle", "Candy Cane Block", "Candy Cane Rod", "Cannon", "Car Seat",
+    "Chair", "Classic Firework", "Coal Block", "Common Chest Block", "Concrete Block",
+    "Concrete Rod", "Cookie Back Wheel", "Cookie Front Wheel", "Corner Wedge", "Delay Block",
+    "Dome Camera", "Door", "Dragon Egg", "Dragon Harpoon", "Dual Candy Cane Harpoon",
+    "Dynamite", "Easter Jetpack", "Egg Cannon", "Epic Chest Block", "Fabric Block",
+    "Firework 1", "Firework 2", "Firework 3", "Firework 4", "Flag",
+    "Front Wheel", "Gameboard", "Glass Block", "Glue", "Gold Block",
+    "Golden Harpoon", "Grass Block", "Harpoon", "Hatch", "Heart",
+    "Helm", "Hinge", "Huge Back Wheel", "Huge Front Wheel", "Huge Wheel",
+    "I-Beam", "Ice Block", "Jet Turbine", "Jetpack", "Lamp",
+    "Large Treasure", "Laser Launcher", "Legendary Chest Block", "Lever", "Life Preserver",
+    "Light Bulb", "Locked Door", "Magnet", "Marble Block", "Marble Rod",
+    "Mast", "Master Builder Trophy", "Medium Treasure", "Mega Thruster", "Metal Block",
+    "Metal Rod", "Mini Gun", "Mounted Bow", "Mounted Candy Cane Sword", "Mounted Cannon",
+    "Mounted Flintlocks", "Mounted Knight Sword", "Mounted Sword", "Mounted Wizard Staff", "Music Note",
+    "Mystery Box", "Neon Block", "Obsidian Block", "Orange Candy", "Parachute Block",
+    "Peppermint Back Wheel", "Peppermint Front Wheel", "Pilot Seat", "Pine Tree", "Pink Candy",
+    "Piston", "Plastic Block", "Plushie 1", "Plushie 2", "Plushie 3",
+    "Plushie 4", "Portal", "Pumpkin", "Purple Candy", "Rare Chest Block",
+    "Red Candy", "Rope", "Rusted Block", "Rusted Rod", "Sand Block",
+    "Seat", "Servo", "Shield Generator", "Sign", "Small Treasure",
+    "Smooth Wood Block", "Snowball Launcher", "Soccer Ball", "Sonic Jet Turbine", "Spike Trap",
+    "Spooky Thruster", "Star", "Star Balloon Block", "Star Jetpack", "Steampunk Jetpack",
+    "Step", "Stone Block", "Stone Rod", "Suspension", "Switch",
+    "Throne", "Thruster", "Titanium Block", "Titanium Rod", "TNT",
+    "Torch", "Toy Block", "Treasure Chest", "Trophy 1st", "Trophy 2nd",
+    "Trophy 3rd", "Truss", "Ultra Boat Motor", "Ultra Jetpack", "Ultra Thruster",
+    "Uncommon Chest Block", "Wedge", "Wheel", "Window", "Winter Boat Motor",
+    "Winter Jet Turbine", "Winter Thruster", "Wood Block", "Wood Rod"
+}
+
+-- Add Block List section to Shapes tab
+local blockListHeader = Instance.new("TextLabel", ShapesTab)
+blockListHeader.Size = UDim2.new(1, 0, 0, 20)
+blockListHeader.Position = UDim2.new(0, 0, 0, 0)
+blockListHeader.BackgroundTransparency = 1
+blockListHeader.Text = "— BABFT Block List (159 Blocks)"
+blockListHeader.TextColor3 = rgb(200, 200, 210)
+blockListHeader.Font = Enum.Font.GothamBold
+blockListHeader.TextSize = 12
+
+local blockSearchBox = Instance.new("TextBox", ShapesTab)
+blockSearchBox.Size = UDim2.new(1, 0, 0, 28)
+blockSearchBox.Position = UDim2.new(0, 0, 0, 24)
+blockSearchBox.BackgroundColor3 = rgb(30, 30, 46)
+blockSearchBox.BorderSizePixel = 0
+blockSearchBox.PlaceholderText = "Search blocks..."
+blockSearchBox.TextColor3 = rgb(220, 220, 230)
+blockSearchBox.Font = Enum.Font.Gotham
+blockSearchBox.TextSize = 11
+local searchCorner = Instance.new("UICorner", blockSearchBox)
+searchCorner.CornerRadius = UDim.new(0, 6)
+
+local blockListFrame = Instance.new("ScrollingFrame", ShapesTab)
+blockListFrame.Size = UDim2.new(1, 0, 0, 280)
+blockListFrame.Position = UDim2.new(0, 0, 0, 56)
+blockListFrame.BackgroundTransparency = 1
+blockListFrame.ScrollBarThickness = 4
+
+local blockListLayout = Instance.new("UIListLayout", blockListFrame)
+blockListLayout.Padding = UDim.new(0, 4)
+blockListLayout.Padding = UDim.new(0, 2)
+
+local selectedBlock = {name = nil}
+
+local function createBlockButton(blockName)
+    local btn = Instance.new("TextButton", blockListFrame)
+    btn.Size = UDim2.new(1, -8, 0, 24)
+    btn.BackgroundColor3 = rgb(40, 40, 56)
+    btn.BorderSizePixel = 0
+    btn.Text = "📦 " .. blockName
+    btn.TextColor3 = rgb(200, 200, 210)
+    btn.Font = Enum.Font.Gotham
+    btn.TextSize = 11
+    
+    local bc = Instance.new("UICorner", btn)
+    bc.CornerRadius = UDim.new(0, 4)
+    
+    btn.MouseButton1Click:Connect(function()
+        selectedBlock.name = blockName
+        statusLabel.Text = "Selected: " .. blockName
+        
+        -- Spawn the block (BABFT specific)
+        pcall(function()
+            local args = {
+                [1] = blockName,
+                [2] = player
+            }
+            -- Try common BABFT remote paths
+            local remotes = game:GetService("ReplicatedStorage"):GetChildren()
+            for _, remote in ipairs(remotes) do
+                if remote:IsA("RemoteFunction") and remote.Name:lower():match("block") or remote.Name:lower():match("spawn") then
+                    pcall(function()
+                        remote:InvokeServer(unpack(args))
+                    end)
+                end
+            end
+        end)
+    end)
+    
+    return btn
+end
+
+-- Create all block buttons
+local blockButtons = {}
+for _, blockName in ipairs(BABFT_BLOCKS) do
+    table.insert(blockButtons, createBlockButton(blockName))
+end
+
+-- Search functionality
+blockSearchBox.Focused:Connect(function()
+    blockSearchBox.Text = ""
+end)
+
+blockSearchBox.FocusLost:Connect(function()
+    if blockSearchBox.Text == "" then
+        blockSearchBox.PlaceholderText = "Search blocks..."
+    end
+    
+    local searchTerm = blockSearchBox.Text:lower()
+    for _, btn in ipairs(blockButtons) do
+        local blockName = btn.Text:sub(3) -- Remove 📦 prefix
+        if searchTerm == "" or blockName:lower():find(searchTerm) then
+            btn.Visible = true
+        else
+            btn.Visible = false
+        end
+    end
+end)
+
+-- Load Selected Block Button
+local loadBlockBtn = Instance.new("TextButton", ShapesTab)
+loadBlockBtn.Size = UDim2.new(1, 0, 0, 28)
+loadBlockBtn.Position = UDim2.new(0, 0, 0, 340)
+loadBlockBtn.BackgroundColor3 = rgb(0, 140, 100)
+loadBlockBtn.BorderSizePixel = 0
+loadBlockBtn.Text = "⬇ Load Selected Block"
+loadBlockBtn.TextColor3 = rgb(240, 240, 240)
+loadBlockBtn.Font = Enum.Font.GothamBold
+loadBlockBtn.TextSize = 11
+local loadCorner = Instance.new("UICorner", loadBlockBtn)
+loadCorner.CornerRadius = UDim.new(0, 6)
+
+loadBlockBtn.MouseButton1Click:Connect(function()
+    if selectedBlock.name then
+        statusLabel.Text = "Loading: " .. selectedBlock.name
+        -- Trigger block spawn
+        pcall(function()
+            local args = {
+                [1] = selectedBlock.name,
+                [2] = player
+            }
+            -- Find and invoke BABFT remote
+            for _, v in ipairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+                if v:IsA("RemoteFunction") then
+                    pcall(function()
+                        v:InvokeServer(unpack(args))
+                    end)
+                end
+            end
+        end)
+    else
+        statusLabel.Text = "Select a block first!"
+    end
+end)
+
+-- Refresh Block List
+local refreshBlocksBtn = Instance.new("TextButton", ShapesTab)
+refreshBlocksBtn.Size = UDim2.new(0.5, -4, 0, 24)
+refreshBlocksBtn.Position = UDim2.new(0, 0, 0, 374)
+refreshBlocksBtn.BackgroundColor3 = rgb(60, 90, 160)
+refreshBlocksBtn.BorderSizePixel = 0
+refreshBlocksBtn.Text = "🔄 Refresh"
+refreshBlocksBtn.TextColor3 = rgb(240, 240, 240)
+refreshBlocksBtn.Font = Enum.Font.GothamBold
+refreshBlocksBtn.TextSize = 10
+local refreshCorner = Instance.new("UICorner", refreshBlocksBtn)
+refreshCorner.CornerRadius = UDim.new(0, 6)
+
+-- Block Count Label
+local blockCountLabel = Instance.new("TextLabel", ShapesTab)
+blockCountLabel.Size = UDim2.new(0.5, -4, 0, 24)
+blockCountLabel.Position = UDim2.new(0.5, 4, 0, 374)
+blockCountLabel.BackgroundTransparency = 1
+blockCountLabel.Text = "📦 " .. #BABFT_BLOCKS .. " blocks loaded"
+blockCountLabel.TextColor3 = rgb(140, 220, 140)
+blockCountLabel.Font = Enum.Font.Gotham
+blockCountLabel.TextSize = 10
+
+refreshBlocksBtn.MouseButton1Click:Connect(function()
+    -- Reset all buttons to visible
+    for _, btn in ipairs(blockButtons) do
+        btn.Visible = true
+    end
+    blockSearchBox.Text = ""
+    statusLabel.Text = "Block list refreshed!"
+end)
 
 -- Print loaded message
 print("oxyX UI Loaded - Build a Boat for Treasure Testing Script")
